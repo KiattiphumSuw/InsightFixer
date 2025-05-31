@@ -1,0 +1,24 @@
+[project]
+name = "insightfixer"
+version = "0.1.0"
+description = ""
+authors = [
+    {name = "Kiattiphum suwanarsa"}
+]
+readme = "README.md"
+requires-python = "^3.10"
+dependencies = [
+    "qdrant-client (>=1.14.2,<2.0.0)",
+    "langchain (>=0.3.25,<0.4.0)",
+    "fastapi (>=0.115.12,<0.116.0)",
+    "uvicorn (>=0.34.2,<0.35.0)",
+    "openai (>=1.82.1,<2.0.0)",
+    "python-dotenv (>=1.1.0,<2.0.0)",
+    "langchain-community (>=0.3.24,<0.4.0)",
+    "tiktoken (>=0.9.0,<0.10.0)"
+]
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
