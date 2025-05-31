@@ -16,14 +16,14 @@ COLLECTION_NAME = "internal-bug-reports"
 def parse_bugs_from_txt(path: str) -> list[Document]:
     
     documents = list()
-    fields = {
-        "bug_number": r"Bug\s+#(\d+)",
-        "title": r"Title:\s*(.+)",
-        "description": r"Description:\s*(.+?)(?:\n[A-Z][\w ]+:|\Z)",
-        "steps": r"Steps to Reproduce:\s*(.+?)(?:\n[A-Z][\w ]+:|\Z)",
-        "environment": r"Environment:\s*(.+?)(?:\n[A-Z][\w ]+:|\Z)",
-        "severity": r"Severity:\s*(.+?)(?:\n[A-Z][\w ]+:|\Z)",
-        "proposed_fix": r"Proposed Fix:\s*(.+?)(?:\n[A-Z][\w ]+:|\Z)",
+    pattern_map = {
+        "bug_number": r"Bug\s+#(?P<bug_number>\d+)",
+        "title": r"Title:\s*(?P<title>.+)",
+        "description": r"Description:\s*(?P<description>.+?)(?=\n[A-Z][a-zA-Z ]+?:|\Z)",
+        "steps": r"Steps to Reproduce:\s*(?P<steps>(?:\d+\..+\n?)+)",
+        "environment": r"Environment:\s*(?P<environment>.+)",
+        "severity": r"Severity:\s*(?P<severity>.+)",
+        "proposed_fix": r"Proposed Fix:\s*(?P<proposed_fix>.+)",
     }
 
     text_in_file = Path(path).read_text(encoding="utf-8")
@@ -31,21 +31,14 @@ def parse_bugs_from_txt(path: str) -> list[Document]:
     
     for issue in issue_entries:
         issue_in_dict = dict()
-        for key, pattern in fields.items():
-            match = re.search(pattern, issue, re.DOTALL)
+        for key, pattern in pattern_map.items():
+            match = re.search(pattern, issue, re.MULTILINE)
             issue_in_dict[key] = match.group(1).strip() if match else None
-
-        combined_text = f"{issue_in_dict["title"]}\n\n{issue_in_dict["description"]}"
+        combined_text = f"{issue_in_dict["title"]}. {issue_in_dict["description"]}"
         documents.append(
             Document(
                 page_content=combined_text,
-                metadata={"issue_number": issue_in_dict.get("bug_number"),
-                          "steps": issue_in_dict.get("steps"),
-                          "environment": issue_in_dict.get("environment"),
-                          "severity": issue_in_dict.get("severity"),
-                          "severity": issue_in_dict.get("severity"),
-                          "proposed_fix": issue_in_dict.get("proposed_fix")
-                        }
+                metadata=issue_in_dict
                 )
             )
     return documents
@@ -74,8 +67,8 @@ def ingest(api_key):
 
 
 if __name__ == "__main__":
-    client = QdrantClient(host="localhost", port=6333)
-    client.delete_collection(collection_name=COLLECTION_NAME)
+    # client = QdrantClient(host="localhost", port=6333)
+    # client.delete_collection(collection_name=COLLECTION_NAME)
     load_dotenv()
     api_key = os.getenv("OPENAI_API_KEY")
     ingest(api_key)
