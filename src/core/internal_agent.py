@@ -1,15 +1,21 @@
 from langchain.agents import initialize_agent, Tool
 from langchain.chat_models import ChatOpenAI
-from src.tools.qdrant_search_tool import search_bug_reports
+from src.tools.qdrant_search_tool import search_bug_reports, search_user_feedbacks
 from src.tools.issue_summarizer import issue_summary_tool
 import json
 
 llm = ChatOpenAI(model="gpt-4", temperature=0)
 
-internal_qa_tool = Tool(
+internal_qa_bug_tool = Tool(
     name="search bug reports",
     func=search_bug_reports,
     description="Searches internal bug reports by semantic meaning from user query."
+)
+
+internal_qa_feedback_tool = Tool(
+    name="search user feedback reports",
+    func=search_user_feedbacks,
+    description="Searches internal user feedback by semantic meaning from user query."
 )
 
 issue_summary_chain_tool = Tool(
@@ -22,7 +28,8 @@ issue_summary_chain_tool = Tool(
     )
 )
 
-tools = [internal_qa_tool, issue_summary_chain_tool]
+
+tools = [internal_qa_bug_tool, internal_qa_feedback_tool, issue_summary_chain_tool]
 
 agent = initialize_agent(
     tools=tools,

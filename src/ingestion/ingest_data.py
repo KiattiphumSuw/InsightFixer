@@ -9,9 +9,11 @@ from qdrant_client.http.models import Distance, VectorParams
 from dotenv import load_dotenv
 import os
 
-DATA_PATH = "data/ai_test_bug_report.txt"
-COLLECTION_NAME = "internal-bug-reports"
+BUG_DATA_PATH = "data/ai_test_bug_report.txt"
+BUG_COLLECTION_NAME = "internal-bug-reports"
 
+FEEDBACK_DATA_PATH = "data/ai_test_user_feedback.txt"
+FEEDBACK_COLLECTION_NAME = "user-feedbacks"
 
 def parse_bugs_from_txt(path: str) -> list[Document]:
     
@@ -43,27 +45,69 @@ def parse_bugs_from_txt(path: str) -> list[Document]:
             )
     return documents
 
+def parse_feedbacks_from_txt(path: str) -> list[Document]:
+    documents: list[Document] = []
+    feedback_pattern = re.compile(r"^Feedback\s+#(?P<id>\d+):\s*(?P<text>.+)$")
+
+    with open(path, "r", encoding="utf-8") as f:
+        lines = f.read().splitlines()
+
+    # Skip the very first line
+    for line in lines[1:]:
+        if not line.strip():
+            continue  # ignore blank lines
+        m = feedback_pattern.match(line)
+        if m:
+            fid = m.group("id")
+            text = m.group("text").strip()
+            doc = Document(
+                page_content=text,
+                metadata={"feedback_id": fid}
+            )
+            documents.append(doc)
+        else:
+            continue
+
+    return documents
 
 def ingest(api_key):
+    embeddings = OpenAIEmbeddings(api_key=api_key)
     client = QdrantClient(host="localhost", port=6333)
 
-    if COLLECTION_NAME not in [c.name for c in client.get_collections().collections]:
+    if BUG_COLLECTION_NAME not in [c.name for c in client.get_collections().collections]:
         client.recreate_collection(
-            collection_name=COLLECTION_NAME,
+            collection_name=BUG_COLLECTION_NAME,
             vectors_config=VectorParams(size=1536, distance=Distance.COSINE)
         )
 
-    docs = parse_bugs_from_txt(DATA_PATH)
-    embeddings = OpenAIEmbeddings(api_key=api_key)
+    if FEEDBACK_COLLECTION_NAME not in [c.name for c in client.get_collections().collections]:
+        client.recreate_collection(
+            collection_name=FEEDBACK_COLLECTION_NAME,
+            vectors_config=VectorParams(size=1536, distance=Distance.COSINE)
+        )
+    # ingest bug information
+    # docs = parse_bugs_from_txt(BUG_DATA_PATH)
+
+    # Qdrant.from_documents(
+    #     docs,
+    #     embeddings,
+    #     url="http://localhost:6333",
+    #     collection_name=BUG_COLLECTION_NAME
+    # )
+
+    # print(f"Ingested {len(docs)} bugs into Qdrant.")
+
+    # ingest feedback information
+    docs = parse_feedbacks_from_txt(FEEDBACK_DATA_PATH)
 
     Qdrant.from_documents(
         docs,
         embeddings,
-        url="http://localhost:6333",  # or your Qdrant URL
-        collection_name=COLLECTION_NAME
+        url="http://localhost:6333",
+        collection_name=FEEDBACK_COLLECTION_NAME
     )
 
-    print(f"Ingested {len(docs)} bugs into Qdrant.")
+    print(f"Ingested {len(docs)} feeds into Qdrant.")
 
 
 if __name__ == "__main__":
