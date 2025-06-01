@@ -1,13 +1,13 @@
 from langchain.tools import tool
 from qdrant_client import QdrantClient
-from langchain.embeddings import OpenAIEmbeddings
+from langchain_community.embeddings import OpenAIEmbeddings
 
 BUG_COLLECTION_NAME = "internal-bug-reports"
 FEEDBACK_COLLECTION_NAME = "user-feedbacks"
 
 @tool
-def search_bug_reports(query: str) -> str:
-    """Search internal bug report database using semantic vector search."""
+def search_bug_reports(query: str) -> dict:
+    """search information in bug reports. Searches internal bug reports by semantic meaning from user query."""
     embeddings = OpenAIEmbeddings()
     client = QdrantClient(host="localhost", port=6333)
 
@@ -21,27 +21,23 @@ def search_bug_reports(query: str) -> str:
 
     if not hits:
         return "No relevant bug reports found."
-    result = ""
+    result = dict()
     for hit in hits:
         bug_content = hit.payload
         bug_meta_data = bug_content.get("metadata")
-        result += f"\nBug #{bug_meta_data.get('bug_number')}: {bug_meta_data.get('title')}\n{bug_content.get('page_content')}\n"
+        bug_meta_data["content"] = bug_content.get('page_content')
+        bug_number = bug_meta_data.pop('bug_number')
+        result[bug_number] = bug_meta_data
 
-    return result.strip()
+    return result
 
 @tool
-def search_user_feedbacks(query: str) -> str:
-    """
-    Search the 'user-feedbacks' Qdrant collection using semantic vector search.
-    Returns up to 3 hits or a "no results" message.
-    """
+def search_user_feedbacks(query: str) -> dict:
+    """search information in user feedback reports. Searches user feedback reports by semantic meaning from user query."""
     embeddings = OpenAIEmbeddings()
     client = QdrantClient(host="localhost", port=6333)
 
-    # 1) Embed the query
     vector = embeddings.embed_query(query)
-
-    # 2) Run Qdrant search
     hits = client.search(
         collection_name=FEEDBACK_COLLECTION_NAME,
         query_vector=vector,
@@ -52,11 +48,12 @@ def search_user_feedbacks(query: str) -> str:
     if not hits:
         return "No relevant user feedbacks found."
 
-    result = ""
+    result = dict()
     for hit in hits:
         feedback_content = hit.payload
         feedback_meta_data = feedback_content.get("metadata")
-
-        result += f"\nFeedback #{feedback_meta_data.get('feedback_id')}: {feedback_content.get('page_content')}\n"
+        feedback_meta_data["content"] = feedback_content.get('page_content')
+        feedback_id = feedback_meta_data.pop('feedback_id')
+        result[feedback_id] = feedback_meta_data
 
     return result

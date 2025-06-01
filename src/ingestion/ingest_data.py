@@ -85,19 +85,6 @@ def ingest(api_key):
             collection_name=FEEDBACK_COLLECTION_NAME,
             vectors_config=VectorParams(size=1536, distance=Distance.COSINE)
         )
-    # ingest bug information
-    # docs = parse_bugs_from_txt(BUG_DATA_PATH)
-
-    # Qdrant.from_documents(
-    #     docs,
-    #     embeddings,
-    #     url="http://localhost:6333",
-    #     collection_name=BUG_COLLECTION_NAME
-    # )
-
-    # print(f"Ingested {len(docs)} bugs into Qdrant.")
-
-    # ingest feedback information
     docs = parse_feedbacks_from_txt(FEEDBACK_DATA_PATH)
 
     Qdrant.from_documents(

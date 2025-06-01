@@ -1,6 +1,6 @@
 import json
-from typing import Any, Optional
-from langchain.llms import OpenAI
+from typing import Any
+from langchain_community.llms import OpenAI
 
 
 def create_issue_summary_prompt(issue_text: str) -> str:
@@ -68,21 +68,16 @@ def parse_issue_summary_response(raw_response: str) -> dict[str, Any]:
 
 
 def issue_summary_tool(issue_text: str) -> dict[str, Any]:
-
+    """Issue summarize tool. Use this tool when summarize a raw issue report."""
     if not issue_text or not issue_text.strip():
         return {"error": "No issue text provided.", "raw_response": ""}
 
-    # 1) Build the prompt
     prompt = create_issue_summary_prompt(issue_text)
-
-    # 2) Initialize LLM with temperature=0 for deterministic JSON output
     llm = OpenAI(temperature=0)
 
-    # 3) Call the LLM
     try:
         raw_response = call_llm_for_summary(prompt, llm)
     except Exception as e:
         return {"error": f"LLM call failed: {e}", "raw_response": ""}
 
-    # 4) Parse the JSON
     return parse_issue_summary_response(raw_response)
