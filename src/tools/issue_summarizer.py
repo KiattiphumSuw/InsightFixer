@@ -1,12 +1,11 @@
 import re
 
-from langchain.embeddings import OpenAIEmbeddings
+from langchain_community.embeddings import OpenAIEmbeddings
 from qdrant_client import QdrantClient, models
 
 import json
 from typing import Any, Optional
 from langchain_community.llms import OpenAI
-from qdrant_client.http.models import Filter, FieldCondition, MatchValue
 
 BUG_COLLECTION_NAME = "internal-bug-reports"
 
