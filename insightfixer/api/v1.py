@@ -1,14 +1,14 @@
 from fastapi import APIRouter
 from pydantic import BaseModel
-from src.core.internal_agent import InternalAgent
+from core import InternalAgent
 
-router = APIRouter()
+api_router = APIRouter()
 internal_agent = InternalAgent()
 
 class QueryRequest(BaseModel):
     query: str
 
-@router.post("/query")
+@api_router.post("/query")
 def ask_agent(request: QueryRequest):
     response = internal_agent.ask_agent(request.query)
     return {"response": response}

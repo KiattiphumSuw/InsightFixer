@@ -8,7 +8,7 @@ from qdrant_client import QdrantClient
 from qdrant_client.http.models import Distance, VectorParams
 from dotenv import load_dotenv
 import os
-from src.common.constant import BUG_DATA_PATH, BUG_COLLECTION_NAME, FEEDBACK_DATA_PATH, FEEDBACK_COLLECTION_NAME
+from common import BUG_DATA_PATH, BUG_COLLECTION_NAME, FEEDBACK_DATA_PATH, FEEDBACK_COLLECTION_NAME
 
 def parse_bugs_from_txt(path: str) -> list[Document]:
     
