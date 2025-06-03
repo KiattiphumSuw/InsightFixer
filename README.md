@@ -1,9 +1,15 @@
 # InsightFixer
+**InsightFixer** is an internal AI assistant designed to help product and engineering teams debug software issues. It leverages agentic AI workflows, powered by internal knowledge sources such as bug reports and user feedback.
 
-**InsightFixer** is an internal AI assistant that helps product and engineering teams resolve software bugs using agentic AI powered by internal knowledge sources such as bug reports and user feedback.
+## Use Cases
+1. Question & Answer
+InsightFixer answers queries about bugs using semantic search and reasoning over internal documentation.
+![Q&A usecase](image/QA.png)
 
-![InsightFixer Demo](image/show_case.png)
 
+2. Issue Summarization
+Automatically extracts structured information—such as reported issues, affected components, and severity—from raw bug descriptions.
+![Summarize usecase](image/extract_issue.png)
 ---
 
 ## Features
@@ -23,18 +29,26 @@
 git clone https://github.com/KiattiphumSuw/InsightFixer.git
 cd InsightFixer
 ```
-###  2. Start services with Docker
+
+### 2. Create a .env file
+``` txt
+QDRANT_HOST=qdrant
+QDRANT_PORT=6333
+OPENAI_API_KEY=<your_openai_key>
+```
+
+### 3. Start services with Docker
 ``` bash
 docker compose up -d
 ```
 
-### 3. Install dependencies using Poetry
+### 4. Install dependencies using Poetry
 ``` bash
 poetry install --no-root
 ```
-### 4. Ingest internal bug data
+### 5. Ingest internal bug data
 ``` bash
-poetry run python src/ingestion/ingestion.py
+poetry run python src/ingestion/ingest_data.py
 ```
 ### Optional: Run Streamlit UI
 Launch the visual interface with:
