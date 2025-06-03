@@ -1,13 +1,17 @@
 from langchain.tools import tool
 from qdrant_client import QdrantClient
 from langchain_community.embeddings import OpenAIEmbeddings
-from common import BUG_COLLECTION_NAME, FEEDBACK_COLLECTION_NAME
+import os
+from ..common import BUG_COLLECTION_NAME, FEEDBACK_COLLECTION_NAME
 
 @tool
 def search_bug_reports(query: str) -> dict:
     """search information in bug reports. Searches internal bug reports by semantic meaning from user query."""
     embeddings = OpenAIEmbeddings()
-    client = QdrantClient(host="localhost", port=6333)
+    client = QdrantClient(
+        host=os.getenv("QDRANT_HOST", "qdrant"), 
+        port=int(os.getenv("QDRANT_PORT", 6333))
+    )
 
     vector = embeddings.embed_query(query)
     hits = client.search(
@@ -33,7 +37,10 @@ def search_bug_reports(query: str) -> dict:
 def search_user_feedbacks(query: str) -> dict:
     """search information in user feedback reports. Searches user feedback reports by semantic meaning from user query."""
     embeddings = OpenAIEmbeddings()
-    client = QdrantClient(host="localhost", port=6333)
+    client = QdrantClient(
+        host=os.getenv("QDRANT_HOST", "qdrant"), 
+        port=int(os.getenv("QDRANT_PORT", 6333))
+    )
 
     vector = embeddings.embed_query(query)
     hits = client.search(

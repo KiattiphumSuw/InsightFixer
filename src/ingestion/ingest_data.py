@@ -8,7 +8,12 @@ from qdrant_client import QdrantClient
 from qdrant_client.http.models import Distance, VectorParams
 from dotenv import load_dotenv
 import os
-from common import BUG_DATA_PATH, BUG_COLLECTION_NAME, FEEDBACK_DATA_PATH, FEEDBACK_COLLECTION_NAME
+
+BUG_DATA_PATH = "data/ai_test_bug_report.txt"
+BUG_COLLECTION_NAME = "internal-bug-reports"
+
+FEEDBACK_DATA_PATH = "data/ai_test_user_feedback.txt"
+FEEDBACK_COLLECTION_NAME = "user-feedbacks"
 
 def parse_bugs_from_txt(path: str) -> list[Document]:
     
@@ -80,6 +85,16 @@ def ingest(api_key):
             collection_name=FEEDBACK_COLLECTION_NAME,
             vectors_config=VectorParams(size=1536, distance=Distance.COSINE)
         )
+    
+    docs = parse_bugs_from_txt(BUG_DATA_PATH)
+
+    Qdrant.from_documents(
+        docs,
+        embeddings,
+        url="http://localhost:6333",
+        collection_name=BUG_COLLECTION_NAME
+    )
+
     docs = parse_feedbacks_from_txt(FEEDBACK_DATA_PATH)
 
     Qdrant.from_documents(

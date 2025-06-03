@@ -1,7 +1,7 @@
 from langgraph.prebuilt import create_react_agent
-from tools import search_bug_reports, search_user_feedbacks, issue_summary_tool, answer_question_tool
+from ..tools import search_bug_reports, search_user_feedbacks, issue_summary_tool, answer_question_tool
 from langgraph.checkpoint.memory import InMemorySaver
-from common import SYSTEM_PROMPT
+from ..common import SYSTEM_PROMPT
 
 class InternalAgent:
     checkpointer = InMemorySaver()

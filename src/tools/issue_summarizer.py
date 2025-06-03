@@ -1,7 +1,7 @@
 import json
 from typing import Any
 from langchain_community.llms import OpenAI
-from common import EXTRACT_ISSUE_PROMPT
+from ..common import EXTRACT_ISSUE_PROMPT
 
 def parse_issue_summary_response(raw_response: str) -> dict[str, Any]:
     try:
