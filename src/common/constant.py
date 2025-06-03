@@ -1,4 +1,3 @@
-
 BUG_DATA_PATH = "data/ai_test_bug_report.txt"
 BUG_COLLECTION_NAME = "internal-bug-reports"
 

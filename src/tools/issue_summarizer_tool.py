@@ -3,7 +3,7 @@ from typing import Any
 
 from langchain_community.llms import OpenAI
 
-from ..common import EXTRACT_ISSUE_PROMPT
+from ..common.prompt import EXTRACT_ISSUE_PROMPT
 
 
 def parse_issue_summary_response(raw_response: str) -> dict[str, Any]:
@@ -13,13 +13,13 @@ def parse_issue_summary_response(raw_response: str) -> dict[str, Any]:
             if key not in parsed:
                 return {
                     "error": f'Missing key "{key}" in JSON.',
-                    "raw_response": raw_response.strip()
+                    "raw_response": raw_response.strip(),
                 }
         return parsed
     except json.JSONDecodeError:
         return {
             "error": "LLM response was not valid JSON.",
-            "raw_response": raw_response.strip()
+            "raw_response": raw_response.strip(),
         }
 
 

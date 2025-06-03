@@ -2,7 +2,7 @@ from typing import Any
 
 from langchain_community.llms import OpenAI
 
-from ..common import ANSWER_QUESTION_PROMPT
+from ..common.prompt import ANSWER_QUESTION_PROMPT
 
 
 def answer_question_tool(question: str, information: str) -> dict[str, Any]:
@@ -22,8 +22,7 @@ def answer_question_tool(question: str, information: str) -> dict[str, Any]:
         return {"error": "No question provided.", "raw_response": ""}
 
     prompt = ANSWER_QUESTION_PROMPT.format(
-        question=question.strip(),
-        information=information.strip()
+        question=question.strip(), information=information.strip()
     )
     llm = OpenAI(temperature=0)
 
