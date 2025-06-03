@@ -1,8 +1,4 @@
-import os
-
 from langchain.tools import tool
-from langchain_community.embeddings import OpenAIEmbeddings
-from qdrant_client import QdrantClient
 
 from ..common import BUG_COLLECTION_NAME, FEEDBACK_COLLECTION_NAME
 from ..core import get_qdrant_client, get_embeddings
