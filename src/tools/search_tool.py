@@ -1,8 +1,11 @@
-from langchain.tools import tool
-from qdrant_client import QdrantClient
-from langchain_community.embeddings import OpenAIEmbeddings
 import os
+
+from langchain.tools import tool
+from langchain_community.embeddings import OpenAIEmbeddings
+from qdrant_client import QdrantClient
+
 from ..common import BUG_COLLECTION_NAME, FEEDBACK_COLLECTION_NAME
+
 
 @tool
 def search_bug_reports(query: str) -> dict:

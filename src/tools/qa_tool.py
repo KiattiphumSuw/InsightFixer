@@ -1,6 +1,9 @@
-from langchain_community.llms import OpenAI
 from typing import Any
+
+from langchain_community.llms import OpenAI
+
 from ..common import ANSWER_QUESTION_PROMPT
+
 
 def answer_question_tool(question: str, information: str) -> dict[str, Any]:
     """

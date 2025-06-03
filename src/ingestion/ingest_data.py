@@ -1,13 +1,13 @@
+import os
 import re
 from pathlib import Path
 
-from langchain.vectorstores import Qdrant
-from langchain.embeddings import OpenAIEmbeddings
+from dotenv import load_dotenv
 from langchain.docstore.document import Document
+from langchain.embeddings import OpenAIEmbeddings
+from langchain.vectorstores import Qdrant
 from qdrant_client import QdrantClient
 from qdrant_client.http.models import Distance, VectorParams
-from dotenv import load_dotenv
-import os
 
 BUG_DATA_PATH = "data/ai_test_bug_report.txt"
 BUG_COLLECTION_NAME = "internal-bug-reports"
