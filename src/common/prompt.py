@@ -58,10 +58,10 @@ ANSWER_QUESTION_PROMPT = dedent(
          Observation: <tool_output> (result of the tool invocation)
     3. Once you have enough context to answer, write your final response.
     4. Format your complete output strictly as a JSON object with two top-level keys:
-       {
+       {{
          "reasoning": "<your full chain of thought explaining each decision>",
          "response": "<your concise, developer-focused answer>"
-       }
+       }}
 
     ❗ Do not output anything outside this JSON structure.
     ❗ Make sure the JSON is valid and parsable.
